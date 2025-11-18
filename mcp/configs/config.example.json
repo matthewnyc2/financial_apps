@@ -1,0 +1,86 @@
+# Example MCP Configuration
+
+This is an example configuration file for MCP services.
+
+## Development Configuration
+
+```json
+{
+  "environment": "development",
+  "servers": {
+    "market_data": {
+      "url": "http://localhost:8001",
+      "api_key": "${MARKET_DATA_API_KEY}",
+      "timeout": 5000,
+      "retry_attempts": 3
+    },
+    "trading": {
+      "url": "http://localhost:8002",
+      "api_key": "${TRADING_API_KEY}",
+      "timeout": 10000,
+      "sandbox_mode": true
+    },
+    "analytics": {
+      "url": "http://localhost:8003",
+      "api_key": "${ANALYTICS_API_KEY}",
+      "timeout": 30000
+    }
+  },
+  "logging": {
+    "level": "debug",
+    "format": "json",
+    "output": "stdout"
+  },
+  "features": {
+    "real_time_quotes": true,
+    "paper_trading": true,
+    "backtesting": true
+  }
+}
+```
+
+## Production Configuration
+
+```json
+{
+  "environment": "production",
+  "servers": {
+    "market_data": {
+      "url": "https://api.marketdata.com",
+      "api_key": "${MARKET_DATA_API_KEY}",
+      "timeout": 5000,
+      "retry_attempts": 5,
+      "circuit_breaker": {
+        "enabled": true,
+        "threshold": 5,
+        "timeout": 60000
+      }
+    },
+    "trading": {
+      "url": "https://api.trading.com",
+      "api_key": "${TRADING_API_KEY}",
+      "timeout": 10000,
+      "sandbox_mode": false,
+      "require_2fa": true
+    }
+  },
+  "logging": {
+    "level": "info",
+    "format": "json",
+    "output": "file",
+    "file_path": "/var/log/mcp/app.log"
+  },
+  "monitoring": {
+    "enabled": true,
+    "metrics_port": 9090,
+    "health_check_port": 8080
+  }
+}
+```
+
+## Usage
+
+Load configuration based on environment:
+```javascript
+const config = require(`./config/${process.env.NODE_ENV}.json`);
+```
