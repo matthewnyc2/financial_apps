@@ -1,0 +1,127 @@
+# OS and Editor files
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Dependencies
+node_modules/
+bower_components/
+vendor/
+venv/
+env/
+.env.local
+.env.*.local
+
+# Build outputs
+dist/
+build/
+out/
+target/
+*.pyc
+__pycache__/
+*.class
+*.o
+*.so
+*.dll
+*.exe
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment files (may contain secrets)
+.env
+.env.development
+.env.staging
+.env.production
+*.key
+*.pem
+*.p12
+
+# Data files (exclude large data from git)
+data/raw/*.csv
+data/raw/*.json
+data/raw/*.parquet
+data/processed/*.csv
+data/processed/*.json
+data/processed/*.parquet
+data/market/*.csv
+data/market/*.json
+data/historical/*.csv
+data/historical/*.json
+data/historical/*.parquet
+data/real-time/*.csv
+data/real-time/*.json
+
+# Keep directory structure but ignore data files
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+!data/market/.gitkeep
+!data/historical/.gitkeep
+!data/real-time/.gitkeep
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+.cache/
+
+# IDE-specific
+.vscode/settings.json
+.idea/workspace.xml
+.idea/tasks.xml
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+Pipfile.lock
+poetry.lock
+
+# System files
+Thumbs.db
+Desktop.ini
+
+# Compiled binaries
+bin/
+obj/
+
+# Secrets and credentials
+secrets/
+credentials/
+*.credentials
+config/**/*.secret.*
+config/**/*.key
+
+# Large model files
+*.model
+*.pkl
+*.h5
+*.weights
+
+# Backup files
+*.bak
+*.backup
+*.old
