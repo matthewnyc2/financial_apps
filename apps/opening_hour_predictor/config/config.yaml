@@ -1,0 +1,238 @@
+# Opening Hour Stock Predictor - Configuration
+
+# Data Sources
+data:
+  # Primary data sources (in priority order)
+  sources:
+    - finnhub
+    - alpaca
+    - yfinance
+
+  # API configuration
+  api_keys_file: .env  # Store API keys here
+  cache_ttl: 3600  # Redis cache time-to-live (seconds)
+  max_download_workers: 50  # Concurrent downloads
+  rate_limit_per_minute: 500
+
+  # Data requirements
+  historical_days: 504  # 2 years for walk-forward
+  intraday_interval: 5min  # 1min, 5min, 15min
+
+  # File storage
+  data_dir: ./data/stocks
+  cache_dir: ./data/cache
+
+# Quantitative Analysis
+analysis:
+  # Technical indicators to calculate
+  technical_indicators:
+    - rsi_7
+    - rsi_14
+    - macd_8_17_9
+    - macd_12_26_9
+    - bbands_20_2
+    - atr_14
+    - vwap
+    - obv
+    - sma_20
+    - sma_50
+    - sma_200
+    - ema_9
+    - ema_20
+    - stoch_14_3_3
+
+  # Lookback periods for calculations
+  lookback_periods: [7, 14, 20, 50, 200]
+
+  # Parallel processing
+  max_compute_workers: 8  # CPU cores to use
+  use_gpu: false  # Enable CUDA acceleration
+
+  # Statistical tests
+  adf_significance: 0.05  # Augmented Dickey-Fuller
+  garch_periods: 22  # GARCH volatility forecast
+
+# News Sentiment Analysis
+sentiment:
+  # Primary model (finbert, vader, textblob)
+  model: finbert
+  fallback: vader
+
+  # News sources
+  sources:
+    - news  # weight: 0.7
+    - reddit  # weight: 0.2
+    - twitter  # weight: 0.1
+
+  # Sentiment parameters
+  decay_lambda: 0.3  # Exponential decay rate
+  importance_weights:
+    earnings: 1.0
+    merger: 1.0
+    lawsuit: 0.8
+    general: 0.4
+    opinion: 0.3
+
+  # Deduplication
+  tfidf_threshold: 0.85
+
+# Machine Learning
+ml:
+  # Models to use in ensemble
+  models:
+    - xgboost
+    - lstm
+    - ensemble
+
+  # XGBoost hyperparameters
+  xgboost:
+    n_estimators: 200
+    max_depth: 5
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    objective: binary:logistic
+
+  # LSTM architecture
+  lstm:
+    units: [128, 64]
+    dropout: 0.2
+    lookback_window: 60
+    epochs: 50
+    batch_size: 32
+
+  # Walk-forward optimization
+  walk_forward:
+    train_window: 252  # days
+    test_window: 63
+    step_size: 21  # retrain every 21 days
+
+  # Feature engineering
+  features:
+    price_based: true
+    technical: true
+    sentiment: true
+    temporal: true
+    market_relative: true
+
+  # Model persistence
+  model_dir: ./models/saved
+  retrain_frequency: 21  # days
+
+# Stock Filtering Pipeline
+filtering:
+  # Stage 1: Basic filters
+  min_market_cap: 500000000  # $500M
+  max_market_cap: null  # No upper limit
+  min_volume: 1000000  # $1M daily volume
+  min_price: 5
+  max_price: 1000
+
+  # Stage 2: Outlier detection
+  outlier_method: mcd  # Minimum Covariance Determinant
+  mahalanobis_threshold: 3.0
+
+  # Stage 3: Factor scoring
+  factors:
+    value: 0.30
+    momentum: 0.30
+    quality: 0.20
+    low_volatility: 0.20
+
+  # Stage 4: Clustering
+  num_clusters: 10
+  cluster_method: kmeans
+
+  # Stage 5: Portfolio optimization
+  max_position_size: 0.20  # 20% max per stock
+  kelly_fraction: 0.25  # Conservative Kelly
+
+# Prediction Settings
+prediction:
+  # Output configuration
+  top_n_gainers: 10
+  top_n_losers: 10
+  confidence_threshold: 0.6  # Min confidence to report
+
+  # Time prediction (minutes into first hour)
+  predict_peak_time: true
+
+  # Risk management
+  max_predicted_gain: 0.10  # 10% max realistic gain
+  max_predicted_loss: -0.10  # 10% max realistic loss
+
+# Backtesting
+backtesting:
+  # Cost model
+  transaction_cost: 0.005  # $0.005 per share
+  slippage: 0.001  # 0.1% slippage
+
+  # Validation
+  monte_carlo_runs: 1000
+  pbo_threshold: 0.25  # Probability of Backtest Overfitting
+
+  # Performance metrics
+  metrics:
+    - sharpe_ratio
+    - sortino_ratio
+    - calmar_ratio
+    - max_drawdown
+    - win_rate
+    - profit_factor
+
+  # Library to use
+  library: vectorbt  # vectorbt, backtrader, backtesting
+
+# Database
+database:
+  # PostgreSQL + TimescaleDB
+  host: localhost
+  port: 5432
+  database: stock_predictor
+  username: ${DB_USER}
+  password: ${DB_PASSWORD}
+
+  # Connection pooling
+  pool_size: 10
+  max_overflow: 20
+
+  # Retention policy
+  predictions_retention_days: 365
+  results_retention_days: 1825  # 5 years
+
+# Redis Cache
+redis:
+  host: localhost
+  port: 6379
+  db: 0
+  password: ${REDIS_PASSWORD}
+
+# Logging
+logging:
+  level: INFO  # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: ./logs/predictor.log
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+  console: true
+
+# CLI Display
+display:
+  use_rich: true  # Rich formatting
+  show_progress_bars: true
+  table_format: fancy_grid
+  color_scheme: monokai
+
+# Performance
+performance:
+  # Memory management
+  max_memory_gb: 4
+  chunk_size: 1000  # Process in chunks if >1000 stocks
+
+  # Timeouts
+  api_timeout: 30
+  computation_timeout: 300
+
+  # Optimization
+  enable_numba: true
+  enable_caching: true
