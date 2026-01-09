@@ -17,6 +17,8 @@ import pickle
 import yfinance as yf
 from dataclasses import dataclass
 import os
+import requests
+from io import StringIO
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -378,8 +380,19 @@ def get_sp500_symbols() -> List[str]:
     try:
         # Download S&P 500 list from Wikipedia
         url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-        tables = pd.read_html(url)
-        df = tables[0]
+
+        # Add headers to avoid 403 Forbidden error
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+
+        # Use requests to fetch with headers
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+
+        # Parse HTML tables (use StringIO to avoid FutureWarning)
+        tables = pd.read_html(StringIO(response.text))
+        df = tables[1]  # S&P 500 table is the second table (index 1)
         symbols = df['Symbol'].tolist()
 
         # Clean symbols (replace . with -)
@@ -398,7 +411,18 @@ def get_nasdaq100_symbols() -> List[str]:
     """Get list of NASDAQ-100 symbols"""
     try:
         url = 'https://en.wikipedia.org/wiki/Nasdaq-100'
-        tables = pd.read_html(url)
+
+        # Add headers to avoid 403 Forbidden error
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+
+        # Use requests to fetch with headers
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+
+        # Parse HTML tables (use StringIO to avoid FutureWarning)
+        tables = pd.read_html(StringIO(response.text))
         df = tables[4]  # NASDAQ-100 components table
         symbols = df['Ticker'].tolist()
 

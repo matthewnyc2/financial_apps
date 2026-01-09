@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip:*)",
+      "Bash(python stock_filtering_pipeline.py:*)",
+      "Bash(python main.py:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

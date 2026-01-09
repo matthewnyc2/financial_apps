@@ -1,0 +1,17 @@
+
+============================================================
+          OPENING HOUR STOCK PREDICTOR - MAIN MENU          
+============================================================
+
+1. Predict Opening Hour Gainers (Top 10)
+2. Predict Opening Hour Losers (Top 10)
+3. Analyze Specific Stock
+4. Run Full Analysis (S&P 500)
+5. Run Quick Test (10 stocks)
+6. Download Latest Data
+7. View Configuration
+0. Exit
+
+============================================================
+
+Select option (0-7): 
